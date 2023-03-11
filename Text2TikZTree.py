@@ -1,3 +1,5 @@
+import os
+
 def CountTabs(line):
     return len(line) - len(line.lstrip("\t"))
 
@@ -45,8 +47,6 @@ def Text2Tree(Text):
     # Para el título
     Tree = f"\\node ({NameList[0]}) {{{Text[0]}}} ;"
 
-    print(NameList)
-
     for i in range(1,len(Text)):
         line = Text[i]
         level = CountTabs(line)
@@ -71,3 +71,17 @@ if(not direction):
 with open(direction) as File:
     Text = [ line.rstrip("\n") for line in File.readlines()]
 
+# CREACIÓN DE LA SALIDA
+
+with open("template.tex") as Template:
+    Output = Template.read()
+
+OutputDir = "./Output/" + direction[:-4] + "Output.tex"
+
+with open(OutputDir, "w") as OutputFile:
+    Output = Output.replace("%::NODE_VAR::", Text2Tree(Text))
+    OutputFile.write(Output)
+
+
+# CREACIÓN DEL PDF
+os.system(f"latexmk {OutputDir} -synctex=1 -interaction=nonstopmode -file-line-error -pdf -outdir=./Output" )

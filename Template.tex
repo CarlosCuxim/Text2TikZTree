@@ -1,0 +1,17 @@
+\documentclass[tikz]{standalone}
+
+\usepackage{tikz}
+    \usetikzlibrary{mindmap}
+
+\begin{document}
+\begin{tikzpicture}[
+    mindmap, every node/.style=concept, concept color=black!20,
+    grow cyclic,
+    level 1/.append style={level distance=4.5cm,sibling angle=90},
+    level 2/.append style={level distance=3cm,sibling angle=45}
+]
+
+%::NODE_VAR::
+
+\end{tikzpicture}
+\end{document}

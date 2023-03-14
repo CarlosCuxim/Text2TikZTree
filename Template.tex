@@ -1,14 +1,59 @@
 \documentclass[tikz]{standalone}
 
+\renewcommand{\familydefault}{\sfdefault}
+
 \usepackage{tikz}
-    \usetikzlibrary{mindmap}
+    \usetikzlibrary{graphs, graphdrawing}
+    \usetikzlibrary{cd}
+    
+    \usegdlibrary{trees}
+
+\usepackage{amsmath, amsfonts}
+\usepackage{graphicx}
+
+% COMANDOS AUXILIARES
+\DeclareMathOperator{\Obj}{Obj}
+\DeclareMathOperator{\Mor}{Mor}
+\DeclareMathOperator{\im}{im}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}}
+
+\newcommand{\id}{\mathrm{id}}
+
+\newcommand{\tensor}{\otimes}
+\newcommand{\labto}{\xrightarrow}
+
+\newcommand{\bec}{\mathbf}
+
 
 \begin{document}
 \begin{tikzpicture}[
-    mindmap, every node/.style=concept, concept color=black!20,
-    grow cyclic,
-    level 1/.append style={level distance=4.5cm,sibling angle=90},
-    level 2/.append style={level distance=3cm,sibling angle=45}
+    tree layout,
+    nodes={
+        align=flush center,
+        draw=blue!50!black,
+        fill=blue!5,
+        rounded corners,
+    },
+    level distance=2cm,
+    MainTitle/.style={
+        fill=blue!50!black,
+        font=\Large\bfseries,
+        text=white,
+        minimum height = 1cm
+    },
+    MainTopic/.style={
+        ultra thick,
+        font=\large\bfseries
+    },
+    level 2/.style={
+        text width = 3cm
+    }
 ]
 
 %::NODE_VAR::

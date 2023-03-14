@@ -1,4 +1,6 @@
 /.vscode
+/Output
+/Input
 *.aux
 *.fdb_latexmk
 *.fls

@@ -1,4 +1,4 @@
-import os
+import os,sys,glob
 
 def CountTabs(line):
     return len(line) - len(line.lstrip("\t"))
@@ -36,7 +36,10 @@ def ListToText(list):
     return newlist
 
 def AddChild(Tree, level, name, text, tab=4*" "):
-    child = "\n" + level*tab + f"child{{ node ({name}) {{{text}}} }}"
+    if level==1:
+        child = "\n" + level*tab + f"child{{ node[MainTopic] ({name}) {{{text}}} }}"
+    else:
+        child = "\n" + level*tab + f"child{{ node ({name}) {{{text}}} }}"
     Tree = Tree[:-level] + child + Tree[-level:]
     return Tree
 
@@ -45,7 +48,7 @@ def Text2Tree(Text):
     NameList = ListToText(LevelList)
 
     # Para el título
-    Tree = f"\\node ({NameList[0]}) {{{Text[0]}}} ;"
+    Tree = f"\\node[MainTitle] ({NameList[0]}) {{{Text[0]}}} ;"
 
     for i in range(1,len(Text)):
         line = Text[i]
@@ -58,30 +61,28 @@ def Text2Tree(Text):
     return Tree
 
 
+def AddExtension(d, ext=".tmm"):
+    return d if d.endswith(ext) else d + ext
 
 
-# SOLICITUD DEL ARCHIVO
+# SOLICITUD DEL LOS ARCHIVOS A LEER
+if (len(sys.argv)==1) or (sys.argv[1] == "*"):
+    direction = glob.glob("./Input/*.tmm")
+else:
+    direction = [ "./Input/" + AddExtension(d) for d in sys.argv[1:]]
 
-direction = input("Ingrese el nombre del archivo: ")
-if(not direction):
-    direction = "Example.txt"
+for d in direction:
+    with open(d) as TextFile:
+        Text = [ line.rstrip("\n") for line in TextFile.readlines()]
 
-# LECTURA DEL ARCHIVO
+    with open("template.tex") as TemplateFile:
+        Template = TemplateFile.read()
+    
+    OutputDir = "./Output/" + os.path.basename(d).rstrip(".tmm") + ".tex"
 
-with open(direction) as File:
-    Text = [ line.rstrip("\n") for line in File.readlines()]
+    with open(OutputDir, "w") as OutputFile:
+        Output = Template.replace("%::NODE_VAR::", Text2Tree(Text))
+        OutputFile.write(Output)
 
-# CREACIÓN DE LA SALIDA
-
-with open("template.tex") as Template:
-    Output = Template.read()
-
-OutputDir = "./Output/" + direction[:-4] + "Output.tex"
-
-with open(OutputDir, "w") as OutputFile:
-    Output = Output.replace("%::NODE_VAR::", Text2Tree(Text))
-    OutputFile.write(Output)
-
-
-# CREACIÓN DEL PDF
-os.system(f"latexmk {OutputDir} -synctex=1 -interaction=nonstopmode -file-line-error -pdf -outdir=./Output" )
+    # Creación del PDF
+    os.system(f"latexmk -synctex=1 -interaction=nonstopmode -file-line-error -lualatex -outdir=./Output/ {OutputDir}" )
